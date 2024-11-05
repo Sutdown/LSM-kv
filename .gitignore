@@ -1,0 +1,16 @@
+# CMake build directories and cache
+cmake-build-debug
+./LSM-kv/cmake-build-debug
+./test/cmake-build-debug
+test/CMakeCache.txt
+test/CMakeFiles
+
+# IDE configuration files
+.vscode
+
+# Temporary test files
+test_temp
+
+# Other build artifacts and directories
+ref
+build/*

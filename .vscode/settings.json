@@ -57,6 +57,8 @@
         "stdexcept": "cpp",
         "stop_token": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp"
     }
 }

@@ -8,15 +8,18 @@
 #include <memory>
 #include <mutex>
 
-class log
+namespace lsmkv::logger
 {
-public:
-    static std::shared_ptr<spdlog::logger> get_instance();
+    class log
+    {
+    public:
+        static std::shared_ptr<spdlog::logger> get_instance();
 
-private:
-    log() = default;
-    static std::shared_ptr<spdlog::logger> _instance;
-    static std::mutex _mutex;
-};
+    private:
+        log() = default;
+        static std::shared_ptr<spdlog::logger> _instance;
+        static std::mutex _mutex;
+    };
+}
 
 #endif // LOG_H
