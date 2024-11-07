@@ -1,3 +1,3 @@
 git add .
-git commit -m "memory allocate"
+git commit -m "update readme"
 git push origin main
