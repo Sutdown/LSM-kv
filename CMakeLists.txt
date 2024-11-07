@@ -3,13 +3,12 @@ project(lsmkv LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
+add_compile_options(-march=native -ffast-math)
+set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_CXX_FLAGS "-Werror -Wextra")
+set(CMAKE_CXX_FLAGS_RELEASE "-Ofast")
+
 option(LSMKV-UNITTEST "build unit-test" ON)
-
-# 查找源文件
-file(GLOB_RECURSE SRC_FILES src/filter/*.cpp src/log/*.cpp src/utils/*.cpp)
-
-# 添加可执行文件（主程序）
-add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 # gtest
 find_package(GTest REQUIRED)
@@ -19,13 +18,23 @@ include_directories(${GTest_INCLUDE_DIRS})
 find_package(spdlog REQUIRED)
 include_directories(${spdlog_INCLUDE_DIRS})
 
-# 查找并链接 pthread 库
-find_package(Threads REQUIRED)
-target_link_libraries(${PROJECT_NAME} Threads::Threads)
+# nlohmann_json
+find_package(nlohmann_json 3.2.0 REQUIRED)
+
+include_directories(src)
+
+file(GLOB_RECURSE SRC src/*.cc)
+add_executable(${PROJECT_NAME} ${SRC})
+target_link_libraries(${PROJECT_NAME} PRIVATE pthread nlohmann_json::nlohmann_json)
 
 if (LSMKV-UNITTEST)
     enable_testing()
+    file(GLOB_RECURSE SRC_WITHOUT_MAIN
+            src/filter/*.cpp
+            src/log/*.cpp
+            src/memory/*.cpp
+            src/utils/*.cpp)
     file(GLOB_RECURSE SRC_TEST tests/*.cpp)
-    find_package(GTest REQUIRED)
     add_executable(lsmkv-unitest ${SRC_WITHOUT_MAIN} ${SRC_TEST})
+    target_link_libraries(lsmkv-unitest PRIVATE gtest pthread nlohmann_json::nlohmann_json)
 endif (LSMKV-UNITTEST)

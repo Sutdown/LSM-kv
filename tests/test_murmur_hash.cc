@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "../src/utils/murmur_hash2.h"
 
-namespace smallkv
+namespace lsmkv
 {
     TEST(MurmurHash, basic)
     {

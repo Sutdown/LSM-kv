@@ -6,7 +6,7 @@
 #include "../src/filter/bloom_filter.h"
 #include "../src/filter/filter_policy.h"
 
-namespace smallkv
+namespace lsmkv
 {
     TEST(BloomFilter, basic)
     {
