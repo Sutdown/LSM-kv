@@ -8,7 +8,7 @@
 #include <memory>
 #include <mutex>
 
-namespace lsmkv::logger
+namespace lsmkv
 {
     class log
     {

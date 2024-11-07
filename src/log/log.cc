@@ -1,13 +1,13 @@
 // log.cpp
 #include "log.h"
 
-namespace lsmkv::logger
+namespace lsmkv
 {
 
-    std::shared_ptr<spdlog::logger> logger::_instance = nullptr; // 确保使用 log
-    std::mutex logger::_mutex;
+    std::shared_ptr<spdlog::logger> _instance = nullptr; // 确保使用 log
+    std::mutex _mutex;
 
-    std::shared_ptr<spdlog::logger> logger::get_instance()
+    std::shared_ptr<spdlog::logger> get_instance()
     {
         std::lock_guard<std::mutex> lock(_mutex);
         if (!_instance)
