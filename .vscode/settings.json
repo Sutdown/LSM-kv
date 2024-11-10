@@ -68,5 +68,6 @@
         "iomanip": "cpp",
         "sstream": "cpp",
         "variant": "cpp"
-    }
+    },
+    "C_Cpp.dimInactiveRegions": false
 }
