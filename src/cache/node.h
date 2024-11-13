@@ -14,7 +14,7 @@ namespace lsmkv
         K key;
         V *val; // 只进行深拷贝
 
-        int32_t ref_cnt = 0;
+        int32_t ref_cnt = 0; // 引用计数
         uint32_t hash_val = 0;
 
         bool in_cache = false;

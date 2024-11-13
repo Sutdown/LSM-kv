@@ -59,6 +59,10 @@ namespace lsmkv
             caches[sharding_index]->release(key);
         }
 
+        /*
+        通过 register_clean_handle 函数，
+        将一个统一的清理回调函数destructor注册到所有的缓存分片（caches[i]）
+        */
         void register_clean_handle(std::function<void(const K &key, V *val)> destructor)
         {
             for (int i = 0; i < SHARDING_NUM; ++i)
