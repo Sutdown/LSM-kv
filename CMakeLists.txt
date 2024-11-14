@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(lsmkv LANGUAGES CXX)
+project(lsmkv)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -23,18 +23,44 @@ find_package(nlohmann_json 3.2.0 REQUIRED)
 
 include_directories(src)
 
-file(GLOB_RECURSE SRC src/*.cc)
+file(GLOB_RECURSE SRC
+        src/cache/*.cpp
+        src/cache/*.h
+        src/file/*.cpp
+        src/file/*.h
+        src/config/*.cpp
+        src/config/*.h
+        src/filter/*.cpp
+        src/filter/*.h
+        src/log/*.cpp
+        src/log/*.h
+        src/memory/*.cpp
+        src/memory/*.h
+        src/utils/*.cpp
+        src/utils/*.h
+        src/main.cpp)
 add_executable(${PROJECT_NAME} ${SRC})
 target_link_libraries(${PROJECT_NAME} PRIVATE pthread nlohmann_json::nlohmann_json)
 
 if (LSMKV-UNITTEST)
     enable_testing()
     file(GLOB_RECURSE SRC_WITHOUT_MAIN
-            src/filter/*.cpp
-            src/log/*.cpp
-            src/memory/*.cpp
-            src/utils/*.cpp)
-    file(GLOB_RECURSE SRC_TEST tests/*.cpp)
-    add_executable(lsmkv-unitest ${SRC_WITHOUT_MAIN} ${SRC_TEST})
-    target_link_libraries(lsmkv-unitest PRIVATE gtest pthread nlohmann_json::nlohmann_json)
+        src/cache/*.cpp
+        src/cache/*.h
+        src/file/*.cpp
+        src/file/*.h
+        src/config/*.cpp
+        src/config/*.h
+        src/filter/*.cpp
+        src/filter/*.h
+        src/log/*.cpp
+        src/log/*.h
+        src/memory/*.cpp
+        src/memory/*.h
+        src/utils/*.cpp
+        src/utils/*.h)
+    file(GLOB_RECURSE SRC_TEST 
+        tests/*.cpp)
+    add_executable(lsmkv-unittest ${SRC_WITHOUT_MAIN} ${SRC_TEST})
+    target_link_libraries(lsmkv-unittest PRIVATE gtest pthread nlohmann_json::nlohmann_json)
 endif (LSMKV-UNITTEST)

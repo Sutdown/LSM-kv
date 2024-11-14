@@ -25,7 +25,7 @@ using namespace std;
 
 int main()
 {
-    auto logger = lsmkv::logger::log::get_instance();
+    auto logger = lsmkv::log::get_instance();
     std::unique_ptr<lsmkv::FilterPolicy> filterPolicy = std::make_unique<lsmkv::BloomFilter>(10 * 10000, 0.01);
     std::vector<std::string> data;
     // 插入10w
