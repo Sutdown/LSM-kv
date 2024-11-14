@@ -1,3 +1,3 @@
 git add .
-git commit -m "add global_var and status"
+git commit -m "file write and read"
 git push origin main                                                                
