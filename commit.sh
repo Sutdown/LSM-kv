@@ -1,3 +1,3 @@
 git add .
-git commit -m "file write and read"
+git commit -m "update readme"
 git push origin main                                                                

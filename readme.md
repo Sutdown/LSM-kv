@@ -6,7 +6,7 @@
 - [x] 布隆过滤器
 - [x] 内存分配器
 - [x] cache
-- [ ] 文件读写
+- [x] 文件读写
 - [ ] sstable
 - [ ] WAL
 - [ ] memtable
@@ -109,6 +109,23 @@ std::function<void(const K &key, V *val)> destructor; // 回调函数
 ```
 
 [lrucache-leetcode](https://leetcode.cn/problems/lru-cache/)
+
+## 文件读写
+
+实现基本的文件读写功能。
+
+### `file_write`
+
+主要用于对`WAL Write-Ahead Log`文件和`Sorted String Table`的持久化操作，实现关注于高效的文件写入，缓冲区，内存映射文件等技术，优化文件写入。
+
+- 将文件中的数据从用户空间写到文件描述符fd指向的文件，
+- 将fd指向文件的缓冲数据同步到磁盘中，
+
+在缓冲区中追加数据时，需要考虑到缓冲区内存是否可以容纳所有的数据，如果可以就直接写入，不行的话先将缓冲区中的数据刷新到磁盘再写入。
+
+### `file_read`
+
+主要用于打开文件，从缓冲区中读取数据，注意实现多线程环境下的并发读取。
 
 ## 参考
 
