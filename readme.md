@@ -127,6 +127,26 @@ std::function<void(const K &key, V *val)> destructor; // 回调函数
 
 主要用于打开文件，从缓冲区中读取数据，注意实现多线程环境下的并发读取。
 
+## SSTable
+
+在leveldb中，当将`memory db`的数据持久化文件中时，`leveldb`会以一定的规则进行文件组织，文件格式变为`sstable`。这个部分也模仿一下`leveldb`，那先回顾一下`leveldb`中的结构。见[leveldb源码阅读3 - File System (sstable,cache,option)](https://zhuanlan.zhihu.com/p/812053605)
+
+### Data Block
+
+> 存储key，value数据对
+
+### Meta Block
+
+> 存储`filter`相关信息
+
+### Index Block
+
+> 存储每个`data block`的索引信息
+
+### Footer
+
+> 存储`meta index block`和`index block`的索引信息
+
 ## 参考
 
 1. [leveldb - google](https://github.com/google/leveldb)

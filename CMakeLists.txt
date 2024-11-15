@@ -26,6 +26,7 @@ include_directories(src)
 file(GLOB_RECURSE SRC
         src/cache/*.cpp
         src/cache/*.h
+        src/db/*.h
         src/file/*.cpp
         src/file/*.h
         src/config/*.cpp
@@ -47,6 +48,7 @@ if (LSMKV-UNITTEST)
     file(GLOB_RECURSE SRC_WITHOUT_MAIN
         src/cache/*.cpp
         src/cache/*.h
+        src/db/*.h
         src/file/*.cpp
         src/file/*.h
         src/config/*.cpp
