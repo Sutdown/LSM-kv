@@ -46,6 +46,11 @@ namespace lsmkv
             return Status::ExecFailed;
         }
         // 可以在多线程环境下安全的实现并发读取
+        /*
+        从文件中读取指定数量的字节存储到缓冲区中
+        由于函数原型中自带偏移量，因此不会更新文件描述符的内部偏移量
+        以此把证线程安全，适合多线程环境
+        */
         auto cnt = pread(fd, buf, count, offset);
         if (cnt != count)
         {
