@@ -1,7 +1,7 @@
 // log.cpp
 #include "log.h"
 
-namespace lsmkv
+namespace lsmkv::log
 {
 
     std::shared_ptr<spdlog::logger> _instance = nullptr; // 确保使用 log

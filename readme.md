@@ -7,7 +7,7 @@
 - [x] 内存分配器
 - [x] cache
 - [x] 文件读写
-- [ ] sstable
+- [x] sstable
 - [ ] WAL
 - [ ] memtable
 
@@ -108,7 +108,7 @@ std::unordered_map<K, Node<K, V> *> garbage_station;  // 待删除列表，从in
 std::function<void(const K &key, V *val)> destructor; // 回调函数
 ```
 
-[lrucache-leetcode](https://leetcode.cn/problems/lru-cache/)
+[lrucache-leetcode](https://leetcode.cn/problems/lru-cache/) 另：锁的设计
 
 ## 文件读写
 
@@ -129,23 +129,67 @@ std::function<void(const K &key, V *val)> destructor; // 回调函数
 
 ## SSTable
 
-在leveldb中，当将`memory db`的数据持久化文件中时，`leveldb`会以一定的规则进行文件组织，文件格式变为`sstable`。这个部分也模仿一下`leveldb`，那先回顾一下`leveldb`中的结构。见[leveldb源码阅读3 - File System (sstable,cache,option)](https://zhuanlan.zhihu.com/p/812053605)
+在leveldb中，当将`memory db`的数据持久化文件中时，`leveldb`会以一定的规则进行文件组织，文件格式变为`sstable`。这个部分也模仿一下`leveldb`，那先回顾一下`leveldb`中的结构。见[leveldb源码阅读3 - File System (sstable,cache,option)](https://zhuanlan.zhihu.com/p/812053605)，[详谈leveldb中的sstable](https://zhuanlan.zhihu.com/p/7615608552)
+
+查询时，一般会通过`footer`先在`meta block`中利用`bloom filter`查询，如果不存在则直接返回，减少了磁盘IO，然后再通过`Index block`找到之后对于相应的`Data block`即可。（通过 `Footer -> IndexBlock -> DataBlock` 的多级索引方式）
+
+> 有个问题，sstable中的地址是footer最小吗，如果是的话，那怎么存放datablock的，一个sstable是一整个完整的连续空间吗？
+
+SSTable 是一个**完整的、连续的磁盘文件**。Footer 是整个 SSTable 文件的最后一个固定部分，不是存储的最小地址。Footer 的大小是**固定的**，程序可以**通过文件总大小减去 Footer 大小**快速找到 Footer 的起始位置。
 
 ### Data Block
 
 > 存储key，value数据对
+>
+> DataBlock_1 ~ DataBlock_N：即DataBlock，由DataBLockBuilder操作
+
+```sql
++-----------------------------+
+| Record_1 - Record_n        |  <-- n条记录，每条记录是一个键值对
++-----------------------------+
+| Restart Point_1 - ..._k    |  <-- k个重启点，从该位置开始一组记录
++-----------------------------+
+| Restart_Num                |  <-- 重启点数量
++-----------------------------+
+| Restart_Offset             |  <-- 重启点数组的起始偏移量
++-----------------------------+
+```
+
+`datablock`中主要需要存储数据，为了最有效的存储数据，我们在类的`private`中设置了`pre_key`，这是为了比较前缀，只存储相同的数据，在它的记录中，它的存储格式为`shared_key_len,unshared_key_len,value_len,unshared_key_conten,value_content`，同时为了查找时的效率加快，每相隔16条记录会设置一个重启点，同时利用一个数组记录重启点数组每次的偏移量；
+
+由于偏移量的大小只能写完16条才能记录，不能实时，同时为了防止多次进行磁盘IO，因此每个数据块都是先存放在缓冲区中，等到最后满时创建数据块，创建之后就不能再添加数据了。
 
 ### Meta Block
 
 > 存储`filter`相关信息
+>
+> MetaBlock：存放Filter等信息，这里每个SST只设置一个MetaBlock
+
+`filter_block`和`datablock`的机制差不多，更简单一点，基本调用`bloomfilter`中的函数，创建过滤器，添加键，判断键是否存在之类的。
 
 ### Index Block
 
 > 存储每个`data block`的索引信息
+>
+> IndexBlock_1 ~ IndexBlock_N：存放对应的DataBLock的Offset信息、最大Key信息
+
+```sql
+ +------------------------+---------------+-----------------+
+ | _shortest_key_size(4B) | _shortest_key | _offsetInfo(8B) |
+ +------------------------+---------------+-----------------+
+```
 
 ### Footer
 
 > 存储`meta index block`和`index block`的索引信息
+>
+> Footer：存放MetaBlock、IndexBlock的Offset信息
+
+```sql
++---------------------------+----------------------------+
+| MetaBlock_OffsetInfo (8B) | IndexBlock_OffsetInfo (8B) |
++---------------------------+----------------------------+
+```
 
 ## 参考
 

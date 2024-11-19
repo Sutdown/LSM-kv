@@ -13,7 +13,7 @@ namespace lsmkv
     private:
         // metablock offsetinfo和indexblock offsetinfo
         std::string _data;
-        std::shared_ptr<spdlog::logger> logger = log::get_instance();
+        std::shared_ptr<spdlog::logger> logger = log::log::get_instance();
 
     public:
         FooterBuilder() = default;

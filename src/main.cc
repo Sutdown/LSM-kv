@@ -1,6 +1,4 @@
 // main.cpp
-#include "log/log.h"
-
 #include <stack>
 #include <queue>
 #include <iostream>
@@ -20,12 +18,14 @@
 #include "log/log.h"
 #include "filter/filter_policy.h"
 #include "filter/bloom_filter.h"
+#include <nlohmann/json.hpp>
+#include <fstream>
 
 using namespace std;
 
 int main()
 {
-    auto logger = lsmkv::log::get_instance();
+    auto logger = lsmkv::log::log::get_instance();
     std::unique_ptr<lsmkv::FilterPolicy> filterPolicy = std::make_unique<lsmkv::BloomFilter>(10 * 10000, 0.01);
     std::vector<std::string> data;
     // 插入10w

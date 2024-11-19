@@ -9,7 +9,7 @@ namespace lsmkv
 {
     TEST(file_reader, basic)
     {
-        auto logger = log::get_instance();
+        auto logger = log::log::get_instance();
         // 新建文件
         std::string path = "./build/tests.sst";
         auto fwriter = std::make_unique<FileWriter>(path, true);

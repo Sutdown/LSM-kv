@@ -8,7 +8,7 @@ namespace lsmkv
 {
     TEST(file_writer, basic)
     {
-        auto logger = lsmkv::log::get_instance();
+        auto logger = log::log::get_instance();
         std::string path = "./build/tests.sst";
         auto fwriter = std::make_unique<lsmkv::FileWriter>(path, true);
 

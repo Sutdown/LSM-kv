@@ -26,7 +26,7 @@ namespace lsmkv
 
     TEST(FreeListAllocate_Reallocate, basic)
     {
-        auto logger = log::get_instance();
+        auto logger = log::log::get_instance();
         std::unique_ptr<FreeListAllocate> allocator = std::make_unique<FreeListAllocate>();
         auto p1 = static_cast<int32_t *>(allocator->Allocate(4));
         *p1 = 8;
@@ -37,7 +37,7 @@ namespace lsmkv
 
     TEST(FreeListAllocate, all_func)
     {
-        auto logger = log::get_instance();
+        auto logger = log::log::get_instance();
         std::unique_ptr<FreeListAllocate> allocator = std::make_unique<FreeListAllocate>();
         // 测试3000个随机长度的链表的创建和释放
         struct Node

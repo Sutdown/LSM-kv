@@ -15,6 +15,12 @@ namespace lsmkv
         {
             return sizeof(size) + sizeof(offset);
         }
+
+        void clear()
+        {
+            size = 0;
+            offset = 0;
+        }
     };
 }
 
