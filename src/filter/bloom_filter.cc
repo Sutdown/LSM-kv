@@ -80,4 +80,9 @@ namespace lsmkv
         }
         return true;
     }
+
+    std::string &BloomFilter::data()
+    {
+        return bits_array;
+    }
 }

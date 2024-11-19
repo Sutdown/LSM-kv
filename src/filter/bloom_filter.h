@@ -16,6 +16,13 @@ namespace lsmkv
         BloomFilter(int32_t keys_num, double false_positive);
         ~BloomFilter() override = default;
 
+        // 用于filter block的持久化
+        std::string &data() override;
+        inline int32_t get_hash_num() override
+        {
+            return hash_func_num;
+        }
+
         std::string policy_name() override;
 
         uint64_t size() override;
@@ -27,7 +34,8 @@ namespace lsmkv
     private:
         int32_t hash_func_num = 0; // 哈希函数个数
         int32_t bits_per_key = 0;  // 每个键的比特数
-        std::vector<uint8_t> bits_array;
+        // std::vector<uint8_t> bits_array;
+        std::string bits_array;
     };
 }
 
