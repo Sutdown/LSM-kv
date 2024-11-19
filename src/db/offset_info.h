@@ -5,7 +5,7 @@
 
 namespace lsmkv
 {
-    struct Offset_info
+    struct OffsetInfo
     {
         /* sstable中的偏移量 */
         int32_t size = 0;

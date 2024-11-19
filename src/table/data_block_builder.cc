@@ -70,7 +70,7 @@ namespace lsmkv
         for (int i = 0; i < record_group_offset.size(); ++i)
         {
             int32_t _record_num; // 当前记录组中的记录数量
-            Offset_info _offsetInfo{0, record_group_offset[i]};
+            OffsetInfo _offsetInfo{0, record_group_offset[i]};
             if (i != record_group_offset.size() - 1)
             {
                 _offsetInfo.size = record_group_offset[i + 1] - record_group_offset[i];

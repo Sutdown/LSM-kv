@@ -1,3 +1,3 @@
 git add .
-git commit -m "file writer/reader test"
+git commit -m "footer, index block"
 git push origin main                                                                
