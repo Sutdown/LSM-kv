@@ -7,7 +7,7 @@
 
 namespace lsmkv
 {
-    FileWriter::FileWriter(const std::string &file_path, bool append = true)
+    FileWriter::FileWriter(const std::string &file_path, bool append)
     {
         int mode = O_CREAT | O_WRONLY; // 文件以只写模式打开
         if (append)
@@ -36,7 +36,7 @@ namespace lsmkv
     }
 
     // 默认直接追加到buffer，当开启flush=true，追加后立即刷新磁盘
-    DBStatus FileWriter::append(const char *data, int32_t len, bool flush = false)
+    DBStatus FileWriter::append(const char *data, int32_t len, bool flush)
     {
         int32_t data_offset = 0;
         assert(data != nullptr);

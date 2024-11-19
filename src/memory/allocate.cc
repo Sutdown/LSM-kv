@@ -39,7 +39,7 @@ namespace lsmkv
         return ret;
     }
 
-    void *FreeListAllocate::Deallocate(void *p, int32_t n)
+    void FreeListAllocate::Deallocate(void *p, int32_t n)
     {
         if (p == nullptr || n == 0)
         {

@@ -24,42 +24,51 @@ find_package(nlohmann_json 3.2.0 REQUIRED)
 include_directories(src)
 
 file(GLOB_RECURSE SRC
-        src/cache/*.cpp
+        src/cache/*.cc
         src/cache/*.h
-        src/db/*.h
-        src/file/*.cpp
-        src/file/*.h
-        src/config/*.cpp
+        src/compress/*.cc
+        src/compress/*.h
+        src/config/*.cc
         src/config/*.h
-        src/filter/*.cpp
+        src/db/*.cc
+        src/db/*.h
+        src/file/*.cc
+        src/file/*.h
+        src/filter/*.cc
         src/filter/*.h
-        src/log/*.cpp
+        src/log/*.cc
         src/log/*.h
-        src/memory/*.cpp
+        src/memory/*.cc
         src/memory/*.h
-        src/utils/*.cpp
+        src/recovery/*.cc        
+        src/recovery/*.h
+        src/table/*.cc
+        src/table/*.h
+        src/utils/*.cc
         src/utils/*.h
-        src/main.cpp)
+        src/wal/*.cc
+        src/wal/*.h
+        src/main.cc)
 add_executable(${PROJECT_NAME} ${SRC})
 target_link_libraries(${PROJECT_NAME} PRIVATE pthread nlohmann_json::nlohmann_json)
 
 if (LSMKV-UNITTEST)
     enable_testing()
     file(GLOB_RECURSE SRC_WITHOUT_MAIN
-        src/cache/*.cpp
+        src/cache/*.cc
         src/cache/*.h
         src/db/*.h
-        src/file/*.cpp
+        src/file/*.cc
         src/file/*.h
-        src/config/*.cpp
+        src/config/*.cc
         src/config/*.h
-        src/filter/*.cpp
+        src/filter/*.cc
         src/filter/*.h
-        src/log/*.cpp
+        src/log/*.cc
         src/log/*.h
-        src/memory/*.cpp
+        src/memory/*.cc
         src/memory/*.h
-        src/utils/*.cpp
+        src/utils/*.cc
         src/utils/*.h)
     file(GLOB_RECURSE SRC_TEST 
         tests/*.cpp)

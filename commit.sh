@@ -1,3 +1,3 @@
 git add .
-git commit -m "footer, index block"
+git commit -m "debug"
 git push origin main                                                                

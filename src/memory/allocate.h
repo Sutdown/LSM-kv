@@ -24,7 +24,7 @@ namespace lsmkv
         ~FreeListAllocate() = default;
 
         void *Allocate(int32_t n);
-        void *Deallocate(void *p, int32_t);
+        void Deallocate(void *p, int32_t);
         void *Reallocate(void *p, int32_t old_size, int new_size);
 
     private:
