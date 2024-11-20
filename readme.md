@@ -191,6 +191,28 @@ SSTable 是一个**完整的、连续的磁盘文件**。Footer 是整个 SSTabl
 +---------------------------+----------------------------+
 ```
 
+## WAL
+
+顾名思义，`Write-Ahead Logging`先写日志，再更新数据。
+
+> levelDB中的文件读写和WAL都是在log_writer和log_reader中实现的。leveldb中的结构为
+>
+> ```sql
+> +--------------+---------+----------+------+
+> | checksum(4B) | len(2B) | type(1B) | data |
+> +--------------+---------+----------+------+
+> ```
+>
+> checksum是校验数据的准确性；len为长度；type为类型，即如果一条数据在一个block中存放不下，这里会例句该block是数据的前面，中间或者后面部分；data为数据。
+>
+> 这里将WAL和文件读写分开实现。
+
+`WAL`和文件读写分开实现有助于遵循单一职责原则和依赖注入原则。
+
+> q1：WAL如何利用filewrite作为私有变量实现的
+
+利用`filewriter`作为私有成员，利用了crc循环冗余校验值存储，同时保留长度，作为wal读写。
+
 ## 参考
 
 1. [leveldb - google](https://github.com/google/leveldb)
