@@ -16,7 +16,7 @@ namespace lsmkv
     */
 
     // 直接根据 键的数量 和 要求的假阳性率 计算最佳的哈希函数数量和位数组大小
-    BloomFilter::BloomFilter(int32_t keys_num, double false_positive)
+    BloomFilter::BloomFilter(int32_t keys_num, double false_positive = 0.01)
     {
         // 计算最佳的位数组大小
         int32_t bits_num = -1 * static_cast<int32_t>(std::log(false_positive) * keys_num / 0.4804530139182014);

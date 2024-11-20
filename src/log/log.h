@@ -10,16 +10,7 @@
 
 namespace lsmkv::log
 {
-    class log
-    {
-    public:
-        static std::shared_ptr<spdlog::logger> get_instance();
-
-    private:
-        log() = default;
-        static std::shared_ptr<spdlog::logger> _instance;
-        static std::mutex _mutex;
-    };
+    std::shared_ptr<spdlog::logger> get_logger();
 }
 
 #endif // LOG_H

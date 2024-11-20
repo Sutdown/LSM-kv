@@ -20,7 +20,7 @@ namespace lsmkv
         std::string _data;
 
     public:
-        explicit FilterBlockBuilder(int32_t keys_num, double false_positive = 0.01);
+        explicit FilterBlockBuilder(int32_t keys_num, double false_positive);
         ~FilterBlockBuilder() = default;
 
         // 添加到_data中，并不会创建过滤器

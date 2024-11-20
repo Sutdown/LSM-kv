@@ -21,7 +21,7 @@ namespace lsmkv
         filterBlockBuilder = std::make_shared<FilterBlockBuilder>(key_num, false_positive);
         indexBlockBuilder = std::make_shared<IndexBlockBuilder>();
         footerBuilder = std::make_shared<FooterBuilder>();
-        logger = log::log::get_instance();
+        logger = log::get_logger();
     }
 
     DBStatus SSTableBuilder::add(const std::string &key, const std::string val)

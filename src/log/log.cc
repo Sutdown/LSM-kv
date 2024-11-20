@@ -4,18 +4,18 @@
 namespace lsmkv::log
 {
 
-    std::shared_ptr<spdlog::logger> _instance = nullptr; // 确保使用 log
+    std::shared_ptr<spdlog::logger> logger = nullptr; // 确保使用 log
     std::mutex _mutex;
 
-    std::shared_ptr<spdlog::logger> get_instance()
+    std::shared_ptr<spdlog::logger> get_logger()
     {
-        std::lock_guard<std::mutex> lock(_mutex);
-        if (!_instance)
+        std::lock_guard<std::mutex> lockGuard(_mutex);
+        if (logger == nullptr)
         {
-            _instance = spdlog::stdout_color_mt("console");
-            _instance->set_level(spdlog::level::debug);
+            logger = spdlog::stdout_color_mt("console");
+            logger->set_level(spdlog::level::debug);
         }
-        return _instance;
+        return logger;
     }
 
 }

@@ -92,7 +92,7 @@ namespace lsmkv
          *    +------------------------------------------------+-------------------------------------------------+
          *
          * */
-        auto logger = log::log::get_instance();
+        auto logger = log::get_logger();
         const std::string path = "./build/test_SSTableBuilder.sst";
         auto _fileWriter = std::make_shared<FileWriter>(path);
         auto sstableBuilder = std::make_unique<SSTableBuilder>(100, _fileWriter, 0.01);

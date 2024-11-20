@@ -4,7 +4,7 @@
 
 namespace lsmkv
 {
-    auto logger = log::log::get_instance();
+    auto logger = log::get_logger();
     FreeListAllocate::FreeListAllocate()
     {
         memory_slot.fill(nullptr); // 内存槽初始化

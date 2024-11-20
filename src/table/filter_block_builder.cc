@@ -6,7 +6,7 @@
 
 namespace lsmkv
 {
-    FilterBlockBuilder::FilterBlockBuilder(int32_t keys_num, double false_positive)
+    FilterBlockBuilder::FilterBlockBuilder(int32_t keys_num, double false_positive = 0.01)
     {
         assert(false_positive >= 0.0);
         filterPolicy = std::make_shared<lsmkv::BloomFilter>(keys_num, false_positive);
