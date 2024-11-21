@@ -1,4 +1,4 @@
-# LSM-KV
+# LSM-KV(Log Structure Merge Key-Value storage)
 
 > 本项目预计基于LSM结构实现一个kv存储引擎。预计要实现：
 
@@ -8,14 +8,27 @@
 - [x] cache
 - [x] 文件读写
 - [x] sstable
-- [ ] WAL
+- [x] WAL
 - [ ] memtable
+- [ ] db
+- [ ] sst_parser
+- [ ] test
+
+有待改进
+
+- [ ] Skiplist优化，保障线程安全
+  skiplist: Insert可优化为 `std::vector<Node *> prev(GetCurrentHeight, nullptr);`
+- [ ] datablock写满后，进行异步持久化，目前是同步
+- [ ] filter_block中存在可优化点
+- [ ] allocate可以优化
 
 ## 日志
 
 > 实现方案：利用单例模式实现日志。
 
-[单例模式的实现方式](https://blog.csdn.net/unonoi/article/details/121138176)；[spdlog - C++日志库](https://blog.xiyoulinux.com/blog/104106245)；[lock_guard and unique_ptr](https://www.cnblogs.com/linuxAndMcu/p/14576646.html)
+- [单例模式的实现方式](https://blog.csdn.net/unonoi/article/details/121138176)；
+- [spdlog - C++日志库](https://blog.xiyoulinux.com/blog/104106245)；
+- [lock_guard and unique_ptr](https://www.cnblogs.com/linuxAndMcu/p/14576646.html);
 
 参考的库是典型的**c++日志库`spdlog`**，它使用内存映射文件和异步日志记录技术，能够快速记录；支持多线程，能够保障线程安全（手段为互斥锁）；具有多种日志级别，采取了灵活的日志格式化选项，支持跨平台，多后端。
 
@@ -213,6 +226,17 @@ SSTable 是一个**完整的、连续的磁盘文件**。Footer 是整个 SSTabl
 
 利用`filewriter`作为私有成员，利用了crc循环冗余校验值存储，同时保留长度，作为wal读写。
 
+## Memtable
+
+> memtable就是一个在内存中进行数据组织与维护的结构。memtable中，所有的数据按**用户定义的排序方法**排序之后按序存储，等到其存储内容的容量达到阈值时（默认为4MB），便将其转换成一个**不可修改**的memtable，与此同时创建一个新的memtable，供用户继续进行读写操作。memtable底层使用了一种[跳表skiplist](https://zh.wikipedia.org/wiki/跳跃列表)数据结构，这种数据结构效率可以比拟二叉查找树，绝大多数操作的时间复杂度为O(log n)。
+
+主要是实现`memtable`和`skiplist`，同样可以参考leveldb，见我曾经写过的一篇文章:[Leveldb源码阅读2 - memtable(skiplist,arena,random) - 知乎](https://zhuanlan.zhihu.com/p/812023477)
+
+### SkipList
+
+> 需要详细描述一下这里实现的skiplist，还有很大的改进空间
+
 ## 参考
 
 1. [leveldb - google](https://github.com/google/leveldb)
+2. [Leveldb源码阅读 - 知乎](https://zhuanlan.zhihu.com/p/811970982)

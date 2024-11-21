@@ -18,6 +18,8 @@ namespace lsmkv
         virtual void erase(const K &key) = 0;
         virtual Node<K, V> *get(const K &key) = 0;
 
+        virtual bool contains(const K &key) = 0;
+        
         virtual void release(const K &key) = 0;
         virtual void register_clean_handle(std::function<void(const K &key, V *val)> destructor) = 0;
     };

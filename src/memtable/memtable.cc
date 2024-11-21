@@ -31,6 +31,16 @@ namespace lsmkv
     }
   }
 
+  int64_t MemTable::GetMemUsage()
+  {
+    return ordered_table->GetMemUsage();
+  }
+
+  int64_t MemTable::GetSize()
+  {
+    return ordered_table->GetSize();
+  }
+
   bool MemTable::Contains(const std::string_view &key) {
     return ordered_table->Contains(key.data());
   }

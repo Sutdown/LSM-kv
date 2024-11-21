@@ -40,6 +40,12 @@ namespace lsmkv
       this->Insert(OpType::KDeletion, key, value);
     }
 
+    // 获得memtable底层的跳表的内存占用
+    int64_t GetMemUsage();
+
+    // 获得memtable底层的跳表的key数量
+    int64_t GetSize();
+
     bool Contains(const std::string_view &key);
 
     std::optional<std::string> Get(const std::string_view &key);

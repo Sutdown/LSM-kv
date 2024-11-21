@@ -53,6 +53,12 @@ namespace lsmkv
             return caches[sharding_index]->get(key);
         }
 
+        bool contains(const K &key)
+        {
+            uint64_t sharding_index = hash_fn(key) % SHARDING_NUM;
+            return caches[sharding_index]->contains(key);
+        }
+
         void release(const K &key)
         {
             uint64_t sharding_index = hash_fn(key) % SHARDING_NUM;
