@@ -42,39 +42,57 @@ file(GLOB_RECURSE SRC
         src/log/*.h
         src/memory/*.cc
         src/memory/*.h
+        src/memtable/*.cc
+        src/memtable/*.h
+        src/sst_parser/*.cc
+        src/sst_parser/*.h
         src/table/*.cc
         src/table/*.h
         src/utils/*.cc
         src/utils/*.h
+        src/wal/*.cc
+        src/wal/*.h
         src/main.cc)
-add_executable(${PROJECT_NAME} ${SRC})
-target_link_libraries(${PROJECT_NAME} PRIVATE pthread nlohmann_json::nlohmann_json)
+
+file(GLOB_RECURSE SRC_WITHOUT_MAIN
+        src/cache/*.cc
+        src/cache/*.h
+        src/compress/*.cc
+        src/compress/*.h
+        src/config/*.cc
+        src/config/*.h
+        src/db/*.cc
+        src/db/*.h
+        src/file/*.cc
+        src/file/*.h
+        src/filter/*.cc
+        src/filter/*.h
+        src/log/*.cc
+        src/log/*.h
+        src/memory/*.cc
+        src/memory/*.h
+        src/memtable/*.cc
+        src/memtable/*.h
+        src/sst_parser/*.cc
+        src/sst_parser/*.h
+        src/table/*.cc
+        src/table/*.h
+        src/utils/*.cc
+        src/utils/*.h
+        src/wal/*.cc
+        src/wal/*.h)
+
+# 生成lsmkv
+add_executable(lsmkv ${SRC})
+target_link_libraries(lsmkv PRIVATE pthread nlohmann_json::nlohmann_json)
+# 链接abseil中的crc32静态库
+target_link_libraries(lsmkv PRIVATE libabsl_crc32c.a libabsl_crc_internal.a libabsl_raw_logging_internal.a)
 
 if (LSMKV-UNITTEST)
     enable_testing()
-    file(GLOB_RECURSE SRC_WITHOUT_MAIN
-    src/cache/*.cc
-    src/cache/*.h
-    src/compress/*.cc
-    src/compress/*.h
-    src/config/*.cc
-    src/config/*.h
-    src/db/*.cc
-    src/db/*.h
-    src/file/*.cc
-    src/file/*.h
-    src/filter/*.cc
-    src/filter/*.h
-    src/log/*.cc
-    src/log/*.h
-    src/memory/*.cc
-    src/memory/*.h
-    src/table/*.cc
-    src/table/*.h
-    src/utils/*.cc
-    src/utils/*.h)
-    file(GLOB_RECURSE SRC_TEST 
-        tests/*.cpp)
-    add_executable(lsmkv-unittest ${SRC_WITHOUT_MAIN} ${SRC_TEST})
-    target_link_libraries(lsmkv-unittest PRIVATE gtest pthread nlohmann_json::nlohmann_json)
+    file(GLOB_RECURSE SRC_TEST
+            tests/*.cpp)
+    add_executable(lsmkv-unitest ${SRC_WITHOUT_MAIN} ${SRC_TEST})
+    target_link_libraries(lsmkv-unitest PRIVATE gtest pthread nlohmann_json::nlohmann_json)
+    target_link_libraries(lsmkv-unitest PRIVATE libabsl_crc32c.a libabsl_crc_internal.a libabsl_raw_logging_internal.a)
 endif (LSMKV-UNITTEST)
