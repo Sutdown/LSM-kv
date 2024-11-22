@@ -22,6 +22,8 @@ namespace lsmkv
         static constexpr DBStatus Success = {1, "Success"};
         static constexpr DBStatus InvalidArgs = {2, "Invalid args"};
         static constexpr DBStatus ExecFailed = {3, "Exex Failed"};
+        static constexpr DBStatus NotImpl = {4, "Not implemented."};
+        static constexpr DBStatus NotFound = {5, "Key not found."};
     };
 }
 

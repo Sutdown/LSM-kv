@@ -15,6 +15,9 @@ namespace lsmkv
 
   class FreeListAllocate;
 
+  class SSTableBuilder;
+  class MemTableIterator;
+
   class MemTable final
   {
   public:
@@ -35,9 +38,8 @@ namespace lsmkv
       this->Insert(OpType::KUpdate, key, value);
     }
 
-    inline void Delete(const std::string_view &key, const std::string_view &value)
-    {
-      this->Insert(OpType::KDeletion, key, value);
+    inline void Delete(const std::string_view &key){
+      this->Insert(OpType::KDeletion, key, "");
     }
 
     // 获得memtable底层的跳表的内存占用
@@ -49,6 +51,13 @@ namespace lsmkv
     bool Contains(const std::string_view &key);
 
     std::optional<std::string> Get(const std::string_view &key);
+
+    void MemTable::ConvertToL1SST(const std::string &sst_filepath,
+                                  std::shared_ptr<SSTableBuilder> sstable_builder);
+
+    // 外部调用，创建一个MemIter，来遍历MemTable底层的跳表，
+    // 本质上有跳表中的Iter提供支持
+    MemTableIterator *MemTable::NewIter();
 
   private:
     // add,update,delete都属于insert

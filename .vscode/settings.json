@@ -69,7 +69,8 @@
         "sstream": "cpp",
         "variant": "cpp",
         "fstream": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "shared_mutex": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false
 }
