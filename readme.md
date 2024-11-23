@@ -9,10 +9,10 @@
 - [x] 文件读写
 - [x] sstable
 - [x] WAL
-- [ ] memtable
-- [ ] db
-- [ ] sst_parser
-- [ ] test
+- [x] memtable
+- [x] db
+- [x] sst_parser
+- [x] test
 
 有待改进
 
@@ -162,9 +162,9 @@ SSTable 是一个**完整的、连续的磁盘文件**。Footer 是整个 SSTabl
 +-----------------------------+
 | Restart Point_1 - ..._k    |  <-- k个重启点，从该位置开始一组记录
 +-----------------------------+
-| Restart_Num                |  <-- 重启点数量
+| Restart_Num(4B)            |  <-- 重启点数量
 +-----------------------------+
-| Restart_Offset             |  <-- 重启点数组的起始偏移量
+| Restart_Offset(8B)         |  <-- 重启点数组的起始偏移量
 +-----------------------------+
 ```
 
