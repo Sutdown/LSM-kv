@@ -42,7 +42,7 @@
 >
 > 利用googletest进行单元测试
 
-相比于`levelDB`中根据键的位数确立哈希函数个数，这里采用**键的数量和假阳性率**直接确立最佳的**哈希函数数量和位数组大小**，这是一篇讲解`bloom filter`中的结论得到的。
+相比于`levelDB`中根据键的位数确立哈希函数个数，这里采用**键的数量和假阳性率**直接确立最佳的**哈希函数数量和位数组大小**，这是一篇讲解`filter`中的结论得到的。
 
 创建过滤器时，会通过键和**双重哈希增量**模拟每次的哈希函数，哈希的方法采用的是murmur_hash方法，最终存储到相应的位中。
 
@@ -144,7 +144,7 @@ std::function<void(const K &key, V *val)> destructor; // 回调函数
 
 在leveldb中，当将`memory db`的数据持久化文件中时，`leveldb`会以一定的规则进行文件组织，文件格式变为`sstable`。这个部分也模仿一下`leveldb`，那先回顾一下`leveldb`中的结构。见[leveldb源码阅读3 - File System (sstable,cache,option)](https://zhuanlan.zhihu.com/p/812053605)，[详谈leveldb中的sstable](https://zhuanlan.zhihu.com/p/7615608552)
 
-查询时，一般会通过`footer`先在`meta block`中利用`bloom filter`查询，如果不存在则直接返回，减少了磁盘IO，然后再通过`Index block`找到之后对于相应的`Data block`即可。（通过 `Footer -> IndexBlock -> DataBlock` 的多级索引方式）
+查询时，一般会通过`footer`先在`meta block`中利用`filter`查询，如果不存在则直接返回，减少了磁盘IO，然后再通过`Index block`找到之后对于相应的`Data block`即可。（通过 `Footer -> IndexBlock -> DataBlock` 的多级索引方式）
 
 > 有个问题，sstable中的地址是footer最小吗，如果是的话，那怎么存放datablock的，一个sstable是一整个完整的连续空间吗？
 

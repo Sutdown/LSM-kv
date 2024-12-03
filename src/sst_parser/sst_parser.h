@@ -40,7 +40,7 @@ namespace lsmkv{
     // 读取全部内容到sst_content中
     void ReadALL();
 
-    // bloom filter只能判断false一定准确
+    // filter只能判断false一定准确
     bool Exists(const std::string_view &key);
 
     private:

@@ -16,11 +16,86 @@ namespace lsmkv{
   }
 
   void SSTParser::Parser(){
+    ReadALL(); // sst文件一次性读到内存中，也就是 sst_content 中
 
+    auto sst_ptr = sst_content.data();
+    const auto SST_FILE_SIZE = sst_content.size();
+
+    // 1. 解析Header
+    {
+      header.MetaBlock_OffsetInfo = *reinterpret_cast<OffsetInfo *>(sst_ptr + SST_FILE_SIZE - 16);
+      header.IndexBlock_OffsetInfo = *reinterpret_cast<OffsetInfo *>(sst_ptr + SST_FILE_SIZE - 8);
+    }
+    logger->info("MetaBlock_OffsetInfo: size={}, offset={}",
+                 header.MetaBlock_OffsetInfo.size, header.MetaBlock_OffsetInfo.offset);
+    logger->info("IndexBlock_OffsetInfo: size={}, offset={}",
+                 header.IndexBlock_OffsetInfo.size, header.IndexBlock_OffsetInfo.offset);
+
+    /*
+     * 草稿纸：
+     * IndexBlock的 size = IndexBlock_OffsetInfo.size
+     * IndexBlock的 offset = IndexBlock_OffsetInfo.offset
+     * 所以：IndexBlock: sst_ptr[offset : offset + size]
+     *
+     * Filter的 size = MetaBlock_OffsetInfo.size
+     * Filter的 offset = MetaBlock_OffsetInfo.offset
+     * 所以: Filter = sst_ptr[offset : offset + size]
+     *
+     * DataBlock的 size = MetaBlock_OffsetInfo.offset
+     * DataBlock的 offset = 0
+     * 所以：DataBlock的 = sst_ptr[0 : size]
+     *
+     * */
+
+    // 2. 解析IndexBlock
+    {
+      const int START = header.IndexBlock_OffsetInfo.offset;
+      const int SIZE = header.IndexBlock_OffsetInfo.size;
+      int start = START;
+      while (start < START + SIZE)
+      {
+        // 每次遍历：递增 4 + key_size + 8
+        int _shortest_key_size = *reinterpret_cast<int32_t *>(sst_ptr + start);
+        Index_block block;
+        // 注意：_shortest_key严格大于该data block的所有key
+        block._shortest_key = std::move(std::string(sst_ptr + start + 4, _shortest_key_size));
+        block.offsetInfo = *reinterpret_cast<OffsetInfo *>(sst_ptr + start + 4 + _shortest_key_size);
+        start += 4 + _shortest_key_size + 8;
+        index_blocks.push_back(std::move(block));
+      }
+      assert(start == START + SIZE);
+    }
+
+    // 3. 解析filter
+    {
+      const int START = header.MetaBlock_OffsetInfo.offset;
+      const int SIZE = header.MetaBlock_OffsetInfo.size;
+      int32_t hash_func_num = *reinterpret_cast<int32_t *>(START + SIZE - 4);
+      std::string bits_array_ = std::move(std::string(sst_ptr + START, SIZE - 4));
+      filterPolicy = std::make_shared<BloomFilter>();
+  //    filterPolicy->create_filter2(hash_func_num, bits_array_); // 创建filter
+    }
   }
 
   std::optional<std::string> SSTParser::Seek(const std::string_view &key){
+    if (!Exists(key))
+    {
+      return std::nullopt;
+    }
 
+    int DataBlockIndex = FindKeyDBIndex(key); // 找到key所在的DataBlock序号
+    if (DataBlockIndex == -1)
+    {
+      logger->info("A bloomfilter misjudgment occurred. [DataBlockIndex == -1]");
+      return std::nullopt;
+    }
+
+    char *SST_PTR = sst_content.data(); // SST_PTR 指的是整个 SST 的起始地址
+
+    auto index_block = index_blocks[DataBlockIndex];
+    auto ret = FindKeyInDB(key, SST_PTR + index_block.offsetInfo.offset,
+                           SST_PTR + index_block.offsetInfo.offset + index_block.offsetInfo.size);
+    return ret;
   }
 
   // private
