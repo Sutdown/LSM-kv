@@ -1,48 +1,86 @@
-// main.cpp
-#include <stack>
-#include <queue>
 #include <iostream>
-#include <algorithm>
-#include <map>
-#include <set>
+#include <chrono>
 #include <vector>
-#include <unordered_map>
-#include <unordered_set>
-#include <cmath>
-#include <memory>
-#include <cassert>
-#include <cmath>
-#include "utils/murmur_hash2.h"
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
-#include "log/log.h"
-#include "filter/filter_policy.h"
-#include "filter/bloom_filter.h"
-#include <nlohmann/json.hpp>
-#include <fstream>
+#include <string>
+#include <random>
+#include <string_view>
+#include "./db/db.h" // 引入 DB 接口
+#include "./db/status.h"
 
-using namespace std;
+using namespace lsmkv;
+
+// 用于生成随机字符串的辅助函数
+std::string GenerateRandomString(size_t length)
+{
+    static const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution<> dist(0, sizeof(charset) - 2);
+
+    std::string random_str;
+    for (size_t i = 0; i < length; ++i)
+    {
+        random_str += charset[dist(rng)];
+    }
+    return random_str;
+}
+
+// 压测函数：插入和读取 10 万条数据
+void BenchmarkDBInsertionAndRead(int num_entries = 100000)
+{
+    // 配置选项
+    lsmkv::Options options;
+    // 根据实际情况配置 options，这里假设有一些默认设置
+    lsmkv::DB db(options);
+
+    // 写入选项
+    lsmkv::WriteOptions write_options;
+
+    // 读取选项
+    lsmkv::ReadOptions read_options;
+
+    // 插入数据并测量时间
+    auto start_insert = std::chrono::high_resolution_clock::now();
+
+    // 插入数据
+    for (int i = 0; i < num_entries; ++i)
+    {
+        std::string key = "key_" + std::to_string(i);  // 生成key
+        std::string value = GenerateRandomString(100); // 生成100字节的随机value
+        lsmkv::DBStatus status = db.Put(write_options, key, value);
+        if (status != Status::Success)
+        {
+            std::cerr << "Insert failed at index " << i << std::endl;
+            return;
+        }
+    }
+
+    auto end_insert = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> insert_duration = end_insert - start_insert;
+    std::cout << "Time to insert " << num_entries << " entries: " << insert_duration.count() << " seconds" << std::endl;
+
+    // 读取数据并测量时间
+    auto start_read = std::chrono::high_resolution_clock::now();
+
+    // 读取数据
+    for (int i = 0; i < num_entries; ++i)
+    {
+        std::string key = "key_" + std::to_string(i);
+        std::string ret_value;
+        lsmkv::DBStatus status = db.Get(read_options, key, &ret_value);
+        if (status != Status::Success)
+        {
+            std::cerr << "Read failed at index " << i << std::endl;
+            return;
+        }
+    }
+
+    auto end_read = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> read_duration = end_read - start_read;
+    std::cout << "Time to read " << num_entries << " entries: " << read_duration.count() << " seconds" << std::endl;
+}
 
 int main()
 {
-    auto logger = lsmkv::log::get_logger();
-    std::unique_ptr<lsmkv::FilterPolicy> filterPolicy = std::make_unique<lsmkv::BloomFilter>(10 * 10000, 0.01);
-    std::vector<std::string> data;
-    // 插入10w
-    for (int i = 0; i < 10 * 10000; ++i)
-    {
-        data.push_back("key_" + std::to_string(i));
-    }
-    filterPolicy->create_filter(data);
-    int cnt = 0;
-    for (int i = 0; i < 20 * 10000; ++i)
-    {
-        if (filterPolicy->exists("key_" + std::to_string(i)))
-        {
-            ++cnt;
-        }
-    }
-    logger->info("cnt=" + to_string(cnt));
-
+    BenchmarkDBInsertionAndRead(100000); // 插入和读取 10 万条数据
     return 0;
 }
