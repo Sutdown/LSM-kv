@@ -1,6 +1,3 @@
-//
-// Created by qianyy on 2023/1/4.
-//
 #include <iostream>
 #include <ctime>
 #include <memory>
