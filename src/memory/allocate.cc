@@ -81,7 +81,7 @@ namespace lsmkv
             for (int i = 0; i < FILL_BLOCK_CNT; i++)
             {
                 auto node = reinterpret_cast<BlockNode *>(mem_pool_start + i * block_size);
-                if (i == 0)
+                if (i == 0) 
                 {
                     node->next == nullptr;
                 }
